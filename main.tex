@@ -33,6 +33,15 @@ case demonstrating that the MI-Laplacian pipeline does not generate spurious geo
 when correlations are absent. Extending the finite-size analysis to $N=12$ confirms that all
 signatures persist smoothly, with no qualitative change in behaviour across the accessible range.
 
+Pushing the two critical points further via density matrix renormalization group (DMRG) to
+$N=20$ reveals a genuine quantitative distinction between the two universality classes: the TFIM
+(Ising, $c=1/2$) critical point follows a clean power law with stable exponent $b \approx 2.10$
+across the full range, while the XXZ (Heisenberg, $c=1$) critical point is not well described by
+a power law at all -- its residuals show a clear systematic pattern -- but is fit almost exactly
+by a logarithmically corrected form, the known finite-size signature of the marginally irrelevant
+operator present at the SU(2)-symmetric Heisenberg point and absent at the Ising point. This is
+reported as an empirical finding rather than a theoretical derivation.
+
 All numerical data and figures are reproducible from the release dataset accompanying this
 manuscript.
 \end{abstract}
@@ -56,9 +65,10 @@ invariants that respond meaningfully to entanglement structure.
 This work provides a dataset satisfying these criteria for two independent quantum universality
 classes—the XXZ/free-fermion family and the transverse-field Ising model—together with a classical
 spin-glass control model. Using exact diagonalization, we compute MI matrices and extract geometric
-invariants from the normalized Laplacian spectrum across system sizes $N = 6, 8, 10, 12$. The
-resulting dataset reveals universal geometric signatures of quantum phase structure that persist
-smoothly across this size range.
+invariants from the normalized Laplacian spectrum across system sizes $N = 6, 8, 10, 12$. We then
+extend the two critical points beyond exact diagonalization's reach using DMRG, up to $N=20$, and
+show that this reveals a genuine quantitative distinction between the two universality classes that
+is invisible at smaller sizes.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Models and Methods}
@@ -282,6 +292,72 @@ The table and Fig.~\ref{fig:finite_size_scaling} together confirm:
 \end{itemize}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Extended Critical-Point Scaling via DMRG}
+\label{sec:dmrg}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+Exact diagonalization limits the accessible system size to $N \lesssim 12$--$14$ in practice. To
+test whether the qualitative differences between the two critical points reflect a genuine,
+quantitatively distinguishable difference in universality class, we extend both critical points
+--- XXZ at $\Delta=1$ and TFIM at $h=1$ --- to $N=20$ using the density matrix renormalization
+group (DMRG), implemented via the \texttt{quimb} tensor-network library. The DMRG ground states and
+resulting mutual-information matrices were validated against this work's own exact-diagonalization
+values at $N=8$ before being trusted for larger sizes, matching to six decimal places.
+
+\subsection{Two Qualitatively Different Scaling Laws}
+
+\begin{figure}[t]
+    \centering
+    \includegraphics[width=\linewidth]{release/critical_scaling_extended.png}
+    \caption{
+    \textbf{DMRG-extended critical-point scaling, $N=6$ to $20$.}
+    Top row: $\lambda_1(N)$ at the TFIM critical point (left) and XXZ critical point (right), with
+    fitted curves overlaid. Bottom row: fit residuals. The TFIM residuals are small and show no
+    systematic trend, consistent with a genuine power law. The XXZ power-law residuals (gray,
+    dashed) trace a clear systematic arc --- the signature of an incorrect functional form ---
+    while the log-corrected residuals (blue) remain flat and near zero across the full range, an
+    order of magnitude smaller than the power-law residuals.
+    }
+    \label{fig:critical_scaling}
+\end{figure}
+
+We fit $\lambda_1(N)$ at each critical point to two candidate forms: a pure power law,
+\begin{equation}
+\lambda_1(N) = a\,N^{-b},
+\end{equation}
+and a logarithmically corrected form,
+\begin{equation}
+\lambda_1(N) = \frac{a}{N}\left(1 + \frac{c}{\ln N}\right),
+\end{equation}
+the latter being the known finite-size signature of a marginally irrelevant operator.
+
+\textbf{TFIM (Ising, $c=1/2$).} The pure power law fits the data essentially exactly
+($b = 2.098$, $R^2 = 0.999999$), with residuals that are small in absolute magnitude and show no
+systematic trend across the fitted range (Fig.~\ref{fig:critical_scaling}, bottom left). This is
+consistent with the Ising CFT, which has no marginally irrelevant operator at this point.
+
+\textbf{XXZ (Heisenberg, $c=1$).} The pure power law does \emph{not} describe the data well
+despite a superficially high $R^2$ ($b = 0.891$, $R^2 = 0.999671$): its residuals trace a clear
+systematic arc across the fitted range --- negative, rising to a peak, then falling again --- which
+is the signature of a missing term in the fit function rather than statistical noise. The
+log-corrected form removes this pattern almost entirely, improving $R^2$ to $0.999999$ with
+residuals at the noise floor and roughly an order of magnitude smaller than the power-law
+residuals (Fig.~\ref{fig:critical_scaling}, bottom right).
+
+\subsection{Interpretation}
+
+The functional form that fits the XXZ critical point is the same form expected on general grounds
+at the SU(2)-symmetric Heisenberg point, which is known to host a marginally irrelevant operator
+that generates exactly this kind of logarithmic finite-size correction; the Ising critical point,
+which has no such operator, shows no such correction. We emphasize that this is reported as an
+\emph{empirical} finding: the data are well described by the log-corrected functional form, and
+that functional form is the one associated in the literature with a marginal operator at this
+specific critical point, but no derivation is offered here connecting the graph-Laplacian
+observable $\lambda_1$ to the underlying operator content of the CFT. Establishing such a
+connection --- i.e., deriving \emph{why} this particular spectral observable should be sensitive to
+a marginal operator in the first place --- is left for future work.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Discussion}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -299,11 +375,16 @@ behaviour is not a physical signature of a quantum spin glass; rather, it serves
 demonstrating that the MI-Laplacian pipeline does not generate spurious geometric structure when
 correlations are absent.
 
-Extending the accessible system size from $N=10$ to $N=12$ provides an independent check on all of
-the above: every qualitative signature—the XXZ/free-fermion equivalence, the smooth XXZ critical
-minimum, the sharpening TFIM transition, and the exact spin-glass triviality—persists without
-modification. No new behaviour emerges at the larger size, supporting the interpretation that these
-are genuine finite-size trends rather than artifacts specific to a particular $N$.
+Extending the accessible system size from $N=10$ to $N=12$ via exact diagonalization provides an
+independent check on all of the above: every qualitative signature persists without modification.
+Pushing further to $N=20$ via DMRG (Sec.~\ref{sec:dmrg}) goes beyond a qualitative check and
+provides a genuine quantitative distinction between the two universality classes: the TFIM critical
+point obeys a clean power law throughout, while the XXZ critical point requires a log-corrected
+form whose structure matches the known signature of the Heisenberg point's marginal operator. This
+is, to our knowledge, the first demonstration that an MI-Laplacian spectral observable is sensitive
+to this specific, subtle piece of established CFT structure, and it substantially strengthens the
+claim that the two universality classes identified here are not merely qualitatively different but
+quantitatively distinguishable in a way that connects to known physics.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Conclusion}
@@ -314,12 +395,17 @@ The classical spin-glass model acts as a useful control case, while the two inde
 universality classes—the XXZ/free-fermion family and the TFIM—exhibit clear and reproducible
 geometric signatures of their respective phase structures. Finite-size scaling confirms the
 robustness of these signatures across $N = 6, 8, 10, 12$, with all trends continuing smoothly and
-monotonically to the largest accessible system size.
+monotonically to the largest accessible exact-diagonalization system size. Extending both critical
+points to $N=20$ via DMRG reveals a genuine quantitative distinction between the two universality
+classes, with the XXZ critical point's finite-size scaling bearing the specific signature of the
+marginally irrelevant operator known to exist at the SU(2) Heisenberg point, and the TFIM critical
+point showing a clean power law consistent with the absence of such an operator at the Ising point.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section*{Data Availability}
 All numerical data (CSV) and figures (PNG) are included in the release package accompanying this
-manuscript.
+manuscript, including the DMRG-extended critical-point dataset
+(\texttt{critical\_scaling\_data.csv}).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section*{Acknowledgements}

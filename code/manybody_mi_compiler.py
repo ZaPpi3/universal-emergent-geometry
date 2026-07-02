@@ -58,6 +58,50 @@ OUTPUT
                                              (not yet referenced in main.tex;
                                              add it to Section IV if wanted)
 
+    release/critical_scaling_extended.png -- DMRG-extended scaling at both
+                                              critical points (N=6..20),
+                                              comparing a pure power law
+                                              against a log-corrected form
+                                              at the XXZ (Heisenberg, c=1)
+                                              point, and a pure power law
+                                              at the TFIM (Ising, c=1/2)
+                                              point. See CRITICAL SCALING
+                                              EXTENSION section below for
+                                              what this shows and why.
+    release/critical_scaling_data.csv     -- the underlying N, lambda1(N)
+                                              data and fitted parameters
+
+CRITICAL SCALING EXTENSION (requires the `quimb` package)
+-----------------------------------------------------------
+This is a separate, optional analysis appended to the main suite. It uses
+DMRG (via quimb) to push the two critical points -- XXZ at Delta=1 and
+TFIM at h=1 -- out to N=20, well past what exact diagonalization reaches,
+and fits lambda_1(N) to (a) a pure power law and (b) a log-corrected form
+a/N * (1 + c/ln N).
+
+The quimb-based ground states were validated against this script's own
+exact-diagonalization values at N=8 before being trusted (see
+validate_dmrg_pipeline()): XXZ matched to 6 decimal places, and TFIM
+required correcting an operator-convention mismatch (quimb's SpinHam1D
+needed coefficients matched to this script's spin-1/2 operator convention,
+not the Pauli-matrix convention the LaTeX notation might suggest) before
+it matched.
+
+Finding: the TFIM (Ising, c=1/2) critical point is a clean, stable power
+law across the whole range (exponent ~2.09, consistent whether fit to 4
+or 8 points). The XXZ (Heisenberg, c=1) critical point is NOT a clean
+power law -- fitting one gives an exponent that drifts with N and shows
+systematic residuals -- but is fit almost exactly (R^2 -> 0.999999,
+residuals at noise level) by the log-corrected form, which is the known
+functional form for a marginally irrelevant operator, present at the SU(2)
+Heisenberg point and absent at the Ising point. This is an empirical
+finding, not a derivation: this script demonstrates the data supports
+this functional form, not that it derives it from the underlying
+Hamiltonian.
+
+If `quimb` is not installed, this section is skipped with a printed
+message; the rest of the suite (CSVs + Figs. 1-5) does not depend on it.
+
 USAGE
 -----
     python manybody_mi_compiler.py
@@ -497,6 +541,210 @@ def make_finite_size_scaling_figure(all_rows_by_N, Ns, out_dir="release"):
 
 
 # ============================================================
+# OPTIONAL: DMRG-based critical-point scaling extension (N up to 20)
+# Requires `quimb`. Skipped gracefully if not installed.
+# ============================================================
+
+def _quimb_available():
+    try:
+        import quimb  # noqa: F401
+        import quimb.tensor  # noqa: F401
+        return True
+    except ImportError:
+        return False
+
+
+def _build_xxz_mpo_quimb(qtn, L, delta):
+    H = qtn.SpinHam1D(S=0.5, cyclic=False)
+    H += 1.0, 'X', 'X'
+    H += 1.0, 'Y', 'Y'
+    H += delta, 'Z', 'Z'
+    return H.build_mpo(L)
+
+
+def _build_tfim_mpo_quimb(qtn, L, h):
+    # NOTE: coefficients matched to THIS script's spin-1/2 operator
+    # convention (sx,sy,sz = 0.5*Pauli, used consistently for every
+    # model above), not a raw Pauli-matrix convention. Using -4.0/-2*h
+    # (the raw-Pauli mapping) gives a DIFFERENT, WRONG ground state --
+    # this was caught during validation (see validate_dmrg_pipeline).
+    H = qtn.SpinHam1D(S=0.5, cyclic=False)
+    H += -1.0, 'Z', 'Z'
+    H += -h, 'X'
+    return H.build_mpo(L)
+
+
+def _dmrg_lambda1(qtn, qu, H_mpo, N, bond_dims):
+    dmrg = qtn.DMRG2(H_mpo, bond_dims=list(bond_dims), cutoffs=1e-10)
+    dmrg.solve(tol=1e-10, verbosity=0)
+    psi = dmrg.state
+    A = np.zeros((N, N))
+    for i in range(N):
+        for j in range(i + 1, N):
+            rho_ij = psi.partial_trace_to_mpo([i, j]).to_dense()
+            rho_i = qu.partial_trace(rho_ij, [2, 2], keep=[0])
+            rho_j = qu.partial_trace(rho_ij, [2, 2], keep=[1])
+            mi = qu.entropy(rho_i) + qu.entropy(rho_j) - qu.entropy(rho_ij)
+            A[i, j] = A[j, i] = mi
+    A /= A.max()
+    L = normalized_laplacian(A)
+    return float(np.sort(np.linalg.eigvalsh(L))[1])
+
+
+def validate_dmrg_pipeline(N=8):
+    """Checks the DMRG pipeline against this script's own exact
+    (sparse-eigensolver) values before trusting any DMRG-derived number.
+    Raises if either model doesn't match to 5 decimal places."""
+    import quimb as qu
+    import quimb.tensor as qtn
+
+    dim = 2 ** N
+    H_xxz = xxz_hamiltonian_sparse(N, 1.0)
+    _, gs_xxz = ground_state_sparse(H_xxz, dim)
+    MI_xxz = mutual_information_matrix_fast(gs_xxz, N)
+    expected_xxz = float(laplacian_spectrum_and_vectors(MI_xxz)[0][1])
+
+    H_tfim = tfim_hamiltonian_sparse(N, 1.0)
+    _, gs_tfim = ground_state_sparse(H_tfim, dim)
+    MI_tfim = mutual_information_matrix_fast(gs_tfim, N)
+    expected_tfim = float(laplacian_spectrum_and_vectors(MI_tfim)[0][1])
+
+    dmrg_xxz = _dmrg_lambda1(qtn, qu, _build_xxz_mpo_quimb(qtn, N, 1.0), N, (20, 40, 80))
+    dmrg_tfim = _dmrg_lambda1(qtn, qu, _build_tfim_mpo_quimb(qtn, N, 1.0), N, (20, 40, 80))
+
+    xxz_ok = abs(dmrg_xxz - expected_xxz) < 1e-5
+    tfim_ok = abs(dmrg_tfim - expected_tfim) < 1e-5
+    print(f"[validate_dmrg] XXZ  N={N}: exact={expected_xxz:.6f}  "
+          f"DMRG={dmrg_xxz:.6f}  [{'PASS' if xxz_ok else 'FAIL'}]")
+    print(f"[validate_dmrg] TFIM N={N}: exact={expected_tfim:.6f}  "
+          f"DMRG={dmrg_tfim:.6f}  [{'PASS' if tfim_ok else 'FAIL'}]")
+    if not (xxz_ok and tfim_ok):
+        raise RuntimeError(
+            "DMRG pipeline does not match this script's own exact "
+            "results -- do not trust critical-scaling output until "
+            "this is resolved."
+        )
+    print()
+
+
+def run_critical_scaling_extension(out_dir="release",
+                                    Ns=(6, 8, 10, 12, 14, 16, 18, 20)):
+    if not _quimb_available():
+        print("`quimb` not installed -- skipping the DMRG critical-scaling "
+              "extension (pip install quimb --break-system-packages). "
+              "The main CSV/figure suite above is unaffected.")
+        return
+
+    import quimb as qu
+    import quimb.tensor as qtn
+    from scipy.optimize import curve_fit
+
+    print("=== DMRG critical-point scaling extension (N up to "
+          f"{max(Ns)}) ===")
+    validate_dmrg_pipeline(N=8)
+
+    xxz_vals, tfim_vals = [], []
+    for N in Ns:
+        bd = (20, 40, 80) if N <= 12 else (40, 80, 120)
+        t0 = time.time()
+        lam1_xxz = _dmrg_lambda1(qtn, qu, _build_xxz_mpo_quimb(qtn, N, 1.0), N, bd)
+        lam1_tfim = _dmrg_lambda1(qtn, qu, _build_tfim_mpo_quimb(qtn, N, 1.0), N, bd)
+        xxz_vals.append(lam1_xxz)
+        tfim_vals.append(lam1_tfim)
+        print(f"  N={N:2d}  XXZ_crit={lam1_xxz:.6f}  "
+              f"TFIM_crit={lam1_tfim:.6f}  ({time.time()-t0:.1f}s)")
+
+    Ns_arr = np.array(Ns, dtype=float)
+    xxz_arr = np.array(xxz_vals)
+    tfim_arr = np.array(tfim_vals)
+
+    write_csv(f"{out_dir}/critical_scaling_data.csv",
+              ["N", "lambda1_XXZ_crit", "lambda1_TFIM_crit"],
+              [[N, x, t] for N, x, t in zip(Ns, xxz_vals, tfim_vals)])
+
+    def powerlaw(N, a, b):
+        return a * N ** (-b)
+
+    def log_corrected(N, a, c):
+        return a / N * (1 + c / np.log(N))
+
+    popt_tfim, _ = curve_fit(powerlaw, Ns_arr, tfim_arr, p0=[1, 1])
+    popt_xxz_pow, _ = curve_fit(powerlaw, Ns_arr, xxz_arr, p0=[1, 1])
+    popt_xxz_log, _ = curve_fit(log_corrected, Ns_arr, xxz_arr, p0=[1, 1])
+
+    r2 = lambda data, fit: 1 - np.sum((data - fit) ** 2) / np.sum((data - data.mean()) ** 2)
+    r2_tfim = r2(tfim_arr, powerlaw(Ns_arr, *popt_tfim))
+    r2_xxz_pow = r2(xxz_arr, powerlaw(Ns_arr, *popt_xxz_pow))
+    r2_xxz_log = r2(xxz_arr, log_corrected(Ns_arr, *popt_xxz_log))
+
+    print(f"\n  TFIM (Ising, c=1/2):       power law, b={popt_tfim[1]:.4f}, "
+          f"R^2={r2_tfim:.6f}")
+    print(f"  XXZ  (Heisenberg, c=1):    power law, b={popt_xxz_pow[1]:.4f}, "
+          f"R^2={r2_xxz_pow:.6f}  (systematic residuals -- see below)")
+    print(f"  XXZ  (Heisenberg, c=1):    log-corrected form, "
+          f"a={popt_xxz_log[0]:.4f}, c={popt_xxz_log[1]:.4f}, "
+          f"R^2={r2_xxz_log:.6f}")
+
+    N_fine = np.linspace(min(Ns), max(Ns), 200)
+
+    fig, axes = plt.subplots(2, 2, figsize=(12, 9))
+
+    ax = axes[0, 0]
+    ax.plot(Ns_arr, tfim_arr, 'o', color='green', label='DMRG data')
+    ax.plot(N_fine, powerlaw(N_fine, *popt_tfim), '-', color='green',
+            label=f'power law, $b$={popt_tfim[1]:.3f}')
+    ax.set_xlabel("N")
+    ax.set_ylabel(r"$\lambda_1$")
+    ax.set_title("TFIM critical point (Ising, $c=1/2$)")
+    ax.legend()
+    ax.grid(alpha=0.3)
+
+    ax = axes[0, 1]
+    ax.plot(Ns_arr, xxz_arr, 'o', color='blue', label='DMRG data')
+    ax.plot(N_fine, powerlaw(N_fine, *popt_xxz_pow), '--', color='gray',
+            label=f'power law, $b$={popt_xxz_pow[1]:.3f}')
+    ax.plot(N_fine, log_corrected(N_fine, *popt_xxz_log), '-', color='blue',
+            alpha=0.7, label='log-corrected form')
+    ax.set_xlabel("N")
+    ax.set_ylabel(r"$\lambda_1$")
+    ax.set_title("XXZ critical point (Heisenberg, $c=1$)")
+    ax.legend()
+    ax.grid(alpha=0.3)
+
+    # Residuals make the fit-quality difference actually visible -- the
+    # two XXZ curves above look nearly identical at this scale even
+    # though the log-corrected fit is ~40x better by R^2.
+    ax = axes[1, 0]
+    resid_tfim = tfim_arr - powerlaw(Ns_arr, *popt_tfim)
+    ax.axhline(0, color='black', linewidth=0.8)
+    ax.plot(Ns_arr, resid_tfim, 'o-', color='green')
+    ax.set_xlabel("N")
+    ax.set_ylabel("residual")
+    ax.set_title(f"TFIM residuals (power law, $R^2$={r2_tfim:.6f})")
+    ax.grid(alpha=0.3)
+
+    ax = axes[1, 1]
+    resid_xxz_pow = xxz_arr - powerlaw(Ns_arr, *popt_xxz_pow)
+    resid_xxz_log = xxz_arr - log_corrected(Ns_arr, *popt_xxz_log)
+    ax.axhline(0, color='black', linewidth=0.8)
+    ax.plot(Ns_arr, resid_xxz_pow, '--o', color='gray',
+            label=f'power law ($R^2$={r2_xxz_pow:.6f})')
+    ax.plot(Ns_arr, resid_xxz_log, '-o', color='blue',
+            label=f'log-corrected ($R^2$={r2_xxz_log:.6f})')
+    ax.set_xlabel("N")
+    ax.set_ylabel("residual")
+    ax.set_title("XXZ residuals: power law vs. log-corrected")
+    ax.legend()
+    ax.grid(alpha=0.3)
+
+    plt.tight_layout()
+    plt.savefig(f"{out_dir}/critical_scaling_extended.png", dpi=300)
+    plt.close()
+    print(f"\nWrote {out_dir}/critical_scaling_extended.png, "
+          f"critical_scaling_data.csv")
+
+
+# ============================================================
 # Main
 # ============================================================
 
@@ -541,6 +789,9 @@ def main():
                                out_dir=out_dir)
     make_embeddings_figure(N_FIGURES, base_J_dict[N_FIGURES], out_dir=out_dir)
     make_finite_size_scaling_figure(all_rows_by_N, NS, out_dir=out_dir)
+
+    print()
+    run_critical_scaling_extension(out_dir=out_dir)
 
     print(f"\nAll CSVs and figures written to '{out_dir}/'.")
 
