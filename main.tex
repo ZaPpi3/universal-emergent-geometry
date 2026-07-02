@@ -19,9 +19,10 @@
 \begin{abstract}
 We demonstrate that mutual-information--induced graph Laplacians provide a universal geometric
 diagnostic of quantum phase structure across multiple models of quantum matter. Using exact
-diagonalization for system sizes $N = 6, 8, 10$, we compute mutual-information matrices from ground
-states of the XXZ chain, the transverse-field Ising model (TFIM), a classical spin-glass Hamiltonian,
-and free fermions, and extract geometric invariants from the normalized Laplacian spectrum.
+diagonalization for system sizes $N = 6, 8, 10, 12$, we compute mutual-information matrices from
+ground states of the XXZ chain, the transverse-field Ising model (TFIM), a classical spin-glass
+Hamiltonian, and free fermions, and extract geometric invariants from the normalized Laplacian
+spectrum.
 
 Across the quantum models, we find two independent universality classes of entanglement-induced
 geometry: (1) the XXZ family, which includes the free-fermion point at $\Delta = 0$ and exhibits
@@ -29,7 +30,8 @@ continuous critical or integrable behaviour depending on parameters; and (2) the
 sharp symmetry-breaking geometry near its transition. The classical spin-glass model produces
 identically zero mutual information, yielding a trivial Laplacian spectrum and serving as a control
 case demonstrating that the MI-Laplacian pipeline does not generate spurious geometric structure
-when correlations are absent.
+when correlations are absent. Extending the finite-size analysis to $N=12$ confirms that all
+signatures persist smoothly, with no qualitative change in behaviour across the accessible range.
 
 All numerical data and figures are reproducible from the release dataset accompanying this
 manuscript.
@@ -54,8 +56,9 @@ invariants that respond meaningfully to entanglement structure.
 This work provides a dataset satisfying these criteria for two independent quantum universality
 classes—the XXZ/free-fermion family and the transverse-field Ising model—together with a classical
 spin-glass control model. Using exact diagonalization, we compute MI matrices and extract geometric
-invariants from the normalized Laplacian spectrum. The resulting dataset reveals universal geometric
-signatures of quantum phase structure.
+invariants from the normalized Laplacian spectrum across system sizes $N = 6, 8, 10, 12$. The
+resulting dataset reveals universal geometric signatures of quantum phase structure that persist
+smoothly across this size range.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Models and Methods}
@@ -101,6 +104,14 @@ Because $I_{ij}=0$, the normalized Laplacian reduces to the identity matrix, yie
 $\lambda_1 = \lambda_2 = 1$ and $\Delta_{\mathrm{gap}} = 0$ for all disorder strengths. The MI decay
 exponent $\alpha$ is undefined. This model therefore serves as a \emph{control case} demonstrating
 that the pipeline does not generate spurious geometric structure when correlations are absent.
+
+We note that $H_{\mathrm{SG}}$ is invariant under a global spin flip ($\sigma_i^z \to -\sigma_i^z$
+for all $i$ simultaneously), so its ground state is always at least doubly degenerate. A generic
+eigensolver handed a degenerate subspace can return an arbitrary superposition of basis states
+rather than a pure computational basis state, and such a superposition can carry spurious nonzero
+entanglement even though the underlying Hamiltonian is exactly diagonal. Ground states for this
+model were therefore obtained by direct minimization over the diagonal of $H_{\mathrm{SG}}$ rather
+than via a generic eigensolver, which is guaranteed correct by construction.
 
 \subsection{Free Fermions (XX Chain)}
 
@@ -165,7 +176,8 @@ therefore $L=\mathbb{I}$.
     \includegraphics[width=\linewidth]{release/universality_gap.png}
     \caption{
     \textbf{Laplacian spectral gap $\Delta_{\mathrm{gap}}$ across models (N=8).}
-    TFIM shows a pronounced spike near $h = 1$; XXZ shows a smooth minimum at $\Delta = 1$.
+    TFIM shows a pronounced spike peaking near $h \approx 0.6$--$0.7$, before descending
+    through $h = 1$; XXZ shows a smooth minimum at $\Delta = 1$.
     Spin glass remains at zero gap because $L=\mathbb{I}$.
     Free fermions maintain a constant gap.
     }
@@ -218,38 +230,55 @@ eigenvectors contain no geometric information.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 To verify that the geometric signatures persist under finite-size scaling, we extract $\lambda_1$ at
-key parameter values for $N = 6, 8, 10$. The XXZ/free-fermion equivalence is visible at $\Delta = 0$,
-and the TFIM symmetry-breaking signature is stable across sizes.
+key parameter values for $N = 6, 8, 10, 12$. The XXZ/free-fermion equivalence is visible at
+$\Delta = 0$ for every size, and the TFIM symmetry-breaking signature strengthens smoothly and
+monotonically as $N$ increases.
 
 \begin{table}[t]
 \centering
 \caption{Finite-size scaling of $\lambda_1$ at representative parameter values, extracted directly from the release CSVs.}
-\begin{tabular}{@{}lcccc@{}}
+\begin{tabular}{@{}lccccc@{}}
 \toprule
-Model & Parameter & $N=6$ & $N=8$ & $N=10$ \\
+Model & Parameter & $N=6$ & $N=8$ & $N=10$ & $N=12$ \\
 \midrule
 XXZ (integrable) & $\Delta = 0$ &
-0.4744 & 0.4140 & 0.3734 \\
+0.4744 & 0.4140 & 0.3734 & 0.3442 \\
 XXZ (critical) & $\Delta = 1$ &
-0.2847 & 0.2228 & 0.1829 \\
+0.2847 & 0.2228 & 0.1829 & 0.1550 \\
 TFIM (critical) & $h = 1$ &
-0.2813 & 0.1538 & 0.0962 \\
+0.2813 & 0.1538 & 0.0962 & 0.0656 \\
 Free fermions & $t = 0.2$ &
-0.4744 & 0.4140 & 0.3734 \\
+0.4744 & 0.4140 & 0.3734 & 0.3442 \\
 Spin glass & any $J$ &
-1.0000 & 1.0000 & 1.0000 \\
+1.0000 & 1.0000 & 1.0000 & 1.0000 \\
 \bottomrule
 \end{tabular}
 \label{tab:scaling}
 \end{table}
 
-The table confirms:
+\begin{figure}[t]
+    \centering
+    \includegraphics[width=\linewidth]{release/finite_size_scaling.png}
+    \caption{
+    \textbf{Finite-size scaling of $\lambda_1$ across universality classes, $N=6,8,10,12$.}
+    XXZ and free fermions overlap exactly at every size, visually confirming the entanglement
+    equivalence established analytically in the Discussion. Both the XXZ critical point and the
+    TFIM symmetry-breaking signature decrease smoothly and monotonically with $N$, with no kink or
+    reversal across the accessible range.
+    }
+    \label{fig:finite_size_scaling}
+\end{figure}
+
+The table and Fig.~\ref{fig:finite_size_scaling} together confirm:
 
 \begin{itemize}
-    \item XXZ and free fermions share identical $\lambda_1$ at $\Delta = 0$ for all sizes.
-    \item The XXZ critical point shows consistent finite-size behaviour.
-    \item The TFIM symmetry-breaking signature strengthens with increasing $N$.
-    \item The spin-glass model remains trivial for all sizes.
+    \item XXZ and free fermions share identical $\lambda_1$ at $\Delta = 0$ for all sizes,
+    including the newly added $N=12$ point.
+    \item The XXZ critical point shows consistent, monotonically decreasing finite-size behaviour.
+    \item The TFIM symmetry-breaking signature strengthens with increasing $N$, continuing to
+    decrease from $N=10$ to $N=12$ with no sign of saturation.
+    \item The spin-glass model remains exactly trivial ($\lambda_1 = 1$) for all sizes, as required
+    by the exact diagonal structure of $H_{\mathrm{SG}}$.
 \end{itemize}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -270,6 +299,12 @@ behaviour is not a physical signature of a quantum spin glass; rather, it serves
 demonstrating that the MI-Laplacian pipeline does not generate spurious geometric structure when
 correlations are absent.
 
+Extending the accessible system size from $N=10$ to $N=12$ provides an independent check on all of
+the above: every qualitative signature—the XXZ/free-fermion equivalence, the smooth XXZ critical
+minimum, the sharpening TFIM transition, and the exact spin-glass triviality—persists without
+modification. No new behaviour emerges at the larger size, supporting the interpretation that these
+are genuine finite-size trends rather than artifacts specific to a particular $N$.
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Conclusion}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -278,7 +313,8 @@ Mutual-information Laplacians provide a universal geometric diagnostic of quantu
 The classical spin-glass model acts as a useful control case, while the two independent quantum
 universality classes—the XXZ/free-fermion family and the TFIM—exhibit clear and reproducible
 geometric signatures of their respective phase structures. Finite-size scaling confirms the
-robustness of these signatures across $N = 6, 8, 10$.
+robustness of these signatures across $N = 6, 8, 10, 12$, with all trends continuing smoothly and
+monotonically to the largest accessible system size.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section*{Data Availability}
