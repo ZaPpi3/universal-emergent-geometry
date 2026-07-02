@@ -7,6 +7,7 @@ By processing the ground states of four completely different physical systems ac
 ## 📁 Repository Architecture
 
 *   `main.tex` — Flagship typeset LaTeX manuscript source formatted under the single-column PRL template.
+*   `main.pdf` — Flagship typeset pdf manuscript formatted under the single-column PRL template.
 *   `code/` — Advanced numerical calculation and state compilation modules.
     *   `manybody_mi_compiler.py` — The full exact diagonalization execution engine. It constructs the multi-model Hilbert space actions, computes reduced density matrices via partial traces, and extracts true von Neumann mutual information.
 *   `release/` — Complete open-source reproducibility bundle containing the 12-matrix dataset and 4 core structural charts:
