@@ -3,20 +3,33 @@
 \usepackage{graphicx}
 \usepackage{bm}
 \usepackage{hyperref}
+\usepackage{physics}
 
 \begin{document}
 
 \title{Universal Emergent Geometry from Mutual Information Across Quantum Models}
 
 \author{Paul Jarvis}
-\email{mrpaulwjarvis@gmail.com}
 \affiliation{Independent Researcher, United Kingdom}
-\date{\today}
+\email{mrpaulwjarvis@gmail.com}
+
+\date{/today}
 
 \begin{abstract}
-We demonstrate that mutual-information--induced graph Laplacians provide a universal geometric diagnostic of quantum phase structure across multiple models of quantum matter. Using exact diagonalization for system sizes $N=6,8,10$, we compute mutual-information matrices from ground states of four representative Hamiltonians---the XXZ chain, the transverse-field Ising model (TFIM), a random spin-glass Hamiltonian, and free fermions---and extract geometric invariants from the normalized Laplacian spectrum.
+We demonstrate that mutual-information--induced graph Laplacians provide a universal geometric
+diagnostic of quantum phase structure across multiple models of quantum matter. Using exact
+diagonalization for system sizes $N = 6, 8, 10$, we compute mutual-information matrices from ground
+states of four representative Hamiltonians---the XXZ chain, the transverse-field Ising model (TFIM),
+a random spin-glass Hamiltonian, and free fermions---and extract geometric invariants from the
+normalized Laplacian spectrum.
 
-Across all models, we observe distinct and reproducible geometric signatures: (1) continuous critical geometry in the XXZ model, (2) sharp symmetry-breaking geometry in TFIM, (3) geometry collapse under disorder in spin glass, and (4) flat integrable geometry in free fermions. These results show that entanglement-induced geometry is a universal macro-state of quantum information, capable of distinguishing phase transitions, disorder regimes, and integrable structure purely from mutual information. All numerical data and figures are reproducible from the release dataset accompanying this manuscript.
+Across all models, we observe distinct and reproducible geometric signatures: (1) continuous
+critical geometry in the XXZ model, (2) sharp symmetry-breaking geometry in TFIM, (3) geometry
+collapse under disorder in spin glass, and (4) flat integrable geometry in free fermions. These
+results show that entanglement-induced geometry is a universal macro-state of quantum information,
+capable of distinguishing phase transitions, disorder regimes, and integrable structure purely
+from mutual information. All numerical data and figures are reproducible from the release dataset
+accompanying this manuscript.
 \end{abstract}
 
 \maketitle
@@ -25,11 +38,20 @@ Across all models, we observe distinct and reproducible geometric signatures: (1
 \section{Introduction}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-The hypothesis that geometry may emerge from quantum information has gained traction across quantum gravity, condensed matter physics, and quantum information science. Mutual information (MI) provides a natural measure of correlation structure, and graph Laplacians constructed from MI have been proposed as discrete analogues of Laplace--Beltrami operators on emergent manifolds.
+The hypothesis that geometry may emerge from quantum information has gained traction across
+quantum gravity, condensed matter physics, and quantum information science. Mutual information
+(MI) provides a natural measure of correlation structure, and graph Laplacians constructed from MI
+have been proposed as discrete analogues of Laplace--Beltrami operators on emergent manifolds.
 
-A central open question is whether MI-induced geometry behaves \emph{universally} across different quantum models. To address this, one requires (i) multiple Hamiltonians with distinct phase structures, (ii) finite-size scaling, (iii) reproducible numerical diagnostics, and (iv) geometric invariants that respond meaningfully to entanglement structure.
+A central open question is whether MI-induced geometry behaves \emph{universally} across different
+quantum models. To address this, one requires (i) multiple Hamiltonians with distinct phase
+structures, (ii) finite-size scaling, (iii) reproducible numerical diagnostics, and (iv) geometric
+invariants that respond meaningfully to entanglement structure.
 
-This work provides the first dataset satisfying all four criteria. Using exact diagonalization, we compute MI matrices for four qualitatively different models and extract geometric invariants from the normalized Laplacian spectrum. The resulting dataset reveals universal geometric signatures of quantum phase structure.
+This work provides the first dataset satisfying all four criteria. Using exact diagonalization, we
+compute MI matrices for four qualitatively different models and extract geometric invariants from
+the normalized Laplacian spectrum. The resulting dataset reveals universal geometric signatures of
+quantum phase structure.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Models and Methods}
@@ -37,68 +59,56 @@ This work provides the first dataset satisfying all four criteria. Using exact d
 
 We study four representative Hamiltonians:
 
-\begin{enumerate}
-    \item \textbf{XXZ chain}: 
-    
+\subsection{XXZ Chain}
 
-\[
-    H_{\mathrm{XXZ}} = \sum_{i=1}^{N-1} 
-    \left( S_i^x S_{i+1}^x + S_i^y S_{i+1}^y + \Delta S_i^z S_{i+1}^z \right),
-    \]
+\begin{equation}
+H_{\mathrm{XXZ}} = \sum_{i=1}^{N-1}
+\left(
+S_i^x S_{i+1}^x +
+S_i^y S_{i+1}^y +
+\Delta S_i^z S_{i+1}^z
+\right),
+\end{equation}
+which exhibits a continuous SU(2)-symmetric critical point at $\Delta = 1$.
 
+\subsection{Transverse-Field Ising Model (TFIM)}
 
-    exhibiting a continuous SU(2)-symmetric critical point at $\Delta = 1$.
+\begin{equation}
+H_{\mathrm{TFIM}} =
+- \sum_{i=1}^{N-1} \sigma_i^z \sigma_{i+1}^z
+- h \sum_{i=1}^{N} \sigma_i^x,
+\end{equation}
+with a well-known symmetry-breaking transition near $h = 1$.
 
-    \item \textbf{Transverse-field Ising model (TFIM)}:
-    
+\subsection{Spin Glass}
 
-\[
-    H_{\mathrm{TFIM}} = -\sum_{i=1}^{N-1} \sigma_i^z \sigma_{i+1}^z - h \sum_{i=1}^N \sigma_i^x,
-    \]
+\begin{equation}
+H_{\mathrm{SG}} = \sum_{i<j} J_{ij} \sigma_i^z \sigma_j^z,
+\end{equation}
+where $J_{ij}$ are Gaussian random couplings. This model lacks a clean geometric phase transition.
 
+\subsection{Free Fermions (XX Chain)}
 
-    with a well-known symmetry-breaking transition near $h=1$.
-
-    \item \textbf{Spin glass}:
-    
-
-\[
-    H_{\mathrm{SG}} = \sum_{i<j} J_{ij} \sigma_i^z \sigma_j^z,
-    \]
-
-
-    where $J_{ij}$ are Gaussian random couplings. This model lacks a clean geometric phase transition.
-
-    \item \textbf{Free fermions (XX chain)}:
-    
-
-\[
-    H_{\mathrm{FF}} = -t \sum_{i=1}^{N-1} 
-    \left( \sigma_i^x \sigma_{i+1}^x + \sigma_i^y \sigma_{i+1}^y \right),
-    \]
-
-
-    an integrable model with scale-free entanglement.
-\end{enumerate}
+\begin{equation}
+H_{\mathrm{FF}} =
+- t \sum_{i=1}^{N-1}
+\left(
+\sigma_i^x \sigma_{i+1}^x +
+\sigma_i^y \sigma_{i+1}^y
+\right),
+\end{equation}
+an integrable model with scale-free entanglement.
 
 Ground states are obtained via exact diagonalization. The mutual-information matrix is computed as
-
-
-\[
+\begin{equation}
 I_{ij} = S_i + S_j - S_{ij},
-\]
-
-
+\end{equation}
 where $S_i$ and $S_{ij}$ are von Neumann entropies of reduced density matrices.
 
 The normalized Laplacian is
-
-
-\[
+\begin{equation}
 L = \mathbb{I} - D^{-1/2} I D^{-1/2},
-\]
-
-
+\end{equation}
 with $D$ the degree matrix. We extract:
 \begin{itemize}
     \item $\lambda_1$: lowest nonzero eigenvalue,
@@ -107,56 +117,76 @@ with $D$ the degree matrix. We extract:
     \item $\alpha$: MI decay exponent from $I(r) \sim r^{-\alpha}$.
 \end{itemize}
 
-Spectral embeddings are obtained from the eigenvectors $v_1, v_2$ corresponding to $\lambda_1, \lambda_2$.
+Spectral embeddings are obtained from the eigenvectors $v_1, v_2$ corresponding to $\lambda_1,
+\lambda_2$.
 
-All computations were performed for $N=6,8,10$ and are fully reproducible from the release dataset.
+All computations were performed for $N = 6, 8, 10$ and are fully reproducible from the release
+dataset.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Results}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\subsection{XXZ: Continuous Critical Geometry}
+\subsection{Universal Behaviour of $\lambda_1$}
 
-For all system sizes, $\lambda_1$, $\lambda_2$, and the spectral gap exhibit smooth minima at $\Delta = 1$. The MI decay exponent $\alpha$ peaks at the same point. Spectral embeddings show a nearly circular manifold, indicating maximal geometric smoothness.
+\begin{figure}[t]
+    \centering
+    \includegraphics[width=\linewidth]{release/universality_lambda1.png}
+    \caption{
+    \textbf{Universal behaviour of the lowest nonzero Laplacian eigenvalue $\lambda_1$ across models (N=8).}
+    The XXZ chain (blue circles) exhibits a smooth minimum at $\Delta = 1$, consistent with continuous critical geometry.
+    The TFIM (orange squares) shows a sharp drop near $h = 1$, reflecting symmetry-breaking behaviour.
+    Spin glass (green triangles) remains flat at $\lambda_1 = 1$, indicating geometric degeneracy under disorder.
+    Free fermions (red inverted triangles) show a constant value, demonstrating integrable flat geometry.
+    }
+    \label{fig:lambda1}
+\end{figure}
 
-\subsection{TFIM: Sharp Symmetry-Breaking Geometry}
+\subsection{Universal Laplacian Spectral Gap}
 
-The TFIM displays abrupt geometric signatures: $\lambda_1$ and $\lambda_2$ drop sharply near $h=1$, while the spectral gap spikes. The MI decay exponent increases monotonically. Embeddings show a distorted, symmetry-broken structure.
+\begin{figure}[t]
+    \centering
+    \includegraphics[width=\linewidth]{release/universality_gap.png}
+    \caption{
+    \textbf{Universal Laplacian spectral gap $\Delta_{\mathrm{gap}} = \lambda_2 - \lambda_1$ across models (N=8).}
+    The TFIM (orange squares) displays a pronounced spike near $h = 1$, marking the symmetry-breaking transition.
+    The XXZ chain (blue circles) shows a smooth minimum at $\Delta = 1$, characteristic of continuous criticality.
+    Spin glass (green triangles) remains at zero gap for all disorder strengths, reflecting collapsed geometry.
+    Free fermions (red inverted triangles) maintain a constant gap, consistent with integrable structure.
+    }
+    \label{fig:gap}
+\end{figure}
 
-\subsection{Spin Glass: Geometry Collapse Under Disorder}
+\subsection{Mutual-Information Decay Exponent}
 
-Spin-glass MI matrices are nearly zero, yielding $L = \mathbb{I}$, $\lambda_1 = \lambda_2 = 1$, and $\Delta_{\mathrm{gap}} = 0$. The MI decay exponent is undefined. Embeddings collapse into noise. This confirms that the pipeline does not hallucinate geometric structure.
+\begin{figure}[t]
+    \centering
+    \includegraphics[width=\linewidth]{release/universality_mi_decay.png}
+    \caption{
+    \textbf{Mutual-information decay exponent $\alpha$ across models (N=8).}
+    The XXZ chain (blue circles) peaks at $\Delta = 1$, indicating maximal long-range entanglement at criticality.
+    The TFIM (orange squares) shows a rapid monotonic increase in $\alpha$ near $h = 1$, consistent with symmetry-breaking.
+    Spin glass (green triangles) yields undefined $\alpha$ due to vanishing MI, confirming disorder-dominated geometry.
+    Free fermions (red inverted triangles) exhibit constant $\alpha$, reflecting scale-free integrable entanglement.
+    }
+    \label{fig:alpha}
+\end{figure}
 
-\subsection{Free Fermions: Flat Integrable Geometry}
+\subsection{Spectral Embeddings}
 
-All geometric invariants remain constant across the parameter sweep. Embeddings show a uniform structure. This is consistent with integrability and scale-free entanglement.
-
-\begin{figure*}[t]
-\centering
-\begin{minipage}{0.24\textwidth}
-  \centering
-  \includegraphics[width=\linewidth]{release/universality_lambda1.png}
-  \small (A) Lowest Eigenvalue $\lambda_1$
-\end{minipage}\hfill
-\begin{minipage}{0.24\textwidth}
-  \centering
-  \includegraphics[width=\linewidth]{release/universality_gap.png}
-  \small (B) Spectral Gap $\Delta_{\text{gap}}$
-\end{minipage}\hfill
-\begin{minipage}{0.24\textwidth}
-  \centering
-  \includegraphics[width=\linewidth]{release/universality_mi_decay.png}
-  \small (C) MI Decay Exponent $\alpha$
-\end{minipage}\hfill
-\begin{minipage}{0.24\textwidth}
-  \centering
-  \includegraphics[width=\linewidth]{release/universality_embeddings.png}
-  \small (D) Spectral Embeddings
-\end{minipage}
-\vspace{0.3cm}
-\caption{Universal emergent graph Laplacian invariants and manifold mappings evaluated across parameter sweeps for the XXZ chain, transverse-field Ising model, random spin glass, and free fermions across system sizes $N=6, 8, 10$.}
-\label{fig:universal_diagnostics}
-\end{figure*}
+\begin{figure}[t]
+    \centering
+    \includegraphics[width=\linewidth]{release/universality_embeddings.png}
+    \caption{
+    \textbf{Spectral embeddings from the lowest Laplacian eigenvectors across models (N=8).}
+    Each panel shows the $(v_1(i), v_2(i))$ embedding of site indices $i$:
+    (a) XXZ at $\Delta = 1$ forms a smooth circular manifold, characteristic of continuous critical geometry.
+    (b) TFIM at $h = 1$ exhibits a distorted structure reflecting symmetry breaking.
+    (c) Spin glass shows a collapsed, noisy embedding due to disorder-dominated MI.
+    (d) Free fermions display a uniform embedding consistent with integrable flat geometry.
+    }
+    \label{fig:embeddings}
+\end{figure}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Discussion}
@@ -165,29 +195,33 @@ All geometric invariants remain constant across the parameter sweep. Embeddings 
 The four models exhibit three distinct universality classes of entanglement-induced geometry:
 
 \begin{enumerate}
-    \item \textbf{Continuous critical geometry} (XXZ),
-    \item \textbf{Symmetry-breaking geometry} (TFIM),
-    \item \textbf{Disorder-dominated geometry} (spin glass),
-    \item \textbf{Integrable flat geometry} (free fermions).
+    \item Continuous critical geometry (XXZ),
+    \item Symmetry-breaking geometry (TFIM),
+    \item Disorder-dominated geometry (spin glass),
+    \item Integrable flat geometry (free fermions).
 \end{enumerate}
 
-These geometric signatures arise purely from mutual information, without reference to the Hamiltonian or energy spectrum. This suggests that MI-induced geometry is a universal macro-state of quantum information.
+These geometric signatures arise purely from mutual information, without reference to the
+Hamiltonian or energy spectrum. This suggests that MI-induced geometry is a universal macro-state
+of quantum information.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Conclusion}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-We have shown that mutual-information Laplacians provide a universal geometric diagnostic of quantum phase structure across multiple models. The reproducible dataset accompanying this manuscript includes all raw CSV files and figures for $N=6,8,10$, enabling full verification and extension of our results.
+We have shown that mutual-information Laplacians provide a universal geometric diagnostic of
+quantum phase structure across multiple models. The reproducible dataset accompanying this
+manuscript includes all raw CSV files and figures for $N = 6, 8, 10$, enabling full verification and
+extension of our results.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section*{Data Availability}
-All numerical data (CSV) and figures (PNG) are included in the release package accompanying this manuscript.
+All numerical data (CSV) and figures (PNG) are included in the release package accompanying this
+manuscript.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section*{Acknowledgements}
-The author thanks collaborators and colleagues for discussions on entanglement geometry and numerical methods.
-
-\bibliographystyle{apsrev4-2}
-\bibliography{refs}
+The author thanks collaborators and colleagues for discussions on entanglement geometry and
+numerical methods.
 
 \end{document}
