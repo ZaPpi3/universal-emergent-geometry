@@ -1,0 +1,11 @@
+numpy>=1.24
+scipy>=1.10
+matplotlib>=3.7
+pytest>=7.0
+
+# Only required for the DMRG cross-check stage of run_all.py (Table I) and
+# the @pytest.mark.slow test in code/tests/test_pipeline.py. If quimb isn't
+# installed, run_all.py skips that one stage and still completes everything
+# else - including all headline N=20 results, which use exact sparse
+# diagonalization and do not depend on quimb.
+quimb>=1.7
