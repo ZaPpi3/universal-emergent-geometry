@@ -1,0 +1,24 @@
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# LaTeX build artifacts
+*.aux
+*.bbl
+*.blg
+*.log
+*.out
+*.toc
+*.fls
+*.fdb_latexmk
+*.synctex.gz
+mainNotes.bib
+
+# Private, local-only (kept in this folder for reference, never uploaded)
+NOTES.md
+
+# OS
+.DS_Store
+Thumbs.db
