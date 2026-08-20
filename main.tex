@@ -27,7 +27,7 @@ demonstrating that the pipeline does not manufacture spurious structure when cor
 absent; the free-fermion (XX) chain is verified to be entanglement-identical to the XXZ chain at
 $\Delta=0$ to numerical precision.
 
-We then push both critical points - XXZ at $\Delta=1$ and TFIM at $h=1$ - to $N=20$ using
+We then push both critical points (XXZ at $\Delta=1$ and TFIM at $h=1$) to $N=20$ using
 \emph{exact} sparse (Lanczos) diagonalization, which reaches this size directly and without any
 truncation approximation; we additionally cross-validate against independent DMRG (matrix-product-state)
 calculations at $N \le 14$, finding agreement in the ground-state energy and the full MI-Laplacian
@@ -76,14 +76,14 @@ To address this, one requires (i) multiple Hamiltonians with distinct phase stru
 finite-size scaling, (iii) reproducible numerical diagnostics, (iv) geometric invariants that
 respond meaningfully to entanglement structure, and (v) independent validation that does not rely
 solely on the novel diagnostic being tested. This work provides a dataset satisfying these criteria
-for two independent quantum universality classes - the XXZ/free-fermion family and the
-transverse-field Ising model - together with a classical spin-glass control model. Using exact
+for two independent quantum universality classes (the XXZ/free-fermion family and the
+transverse-field Ising model) together with a classical spin-glass control model. Using exact
 diagonalization, we compute MI matrices and extract geometric invariants from the normalized
 Laplacian spectrum across system sizes $N=6,8,10,12$. We then extend both critical points to $N=20$
 using exact sparse diagonalization (not previously attempted for this observable at this size),
-cross-validate against DMRG, and add four further checks - a Calabrese-Cardy central-charge fit, a
+cross-validate against DMRG, and add four further checks: a Calabrese-Cardy central-charge fit, a
 textbook Ising energy-gap scaling collapse, a boundary-condition comparison, and a $\Delta$-sweep
-localizing the marginal-operator signature - that are new relative to earlier drafts of this line
+localizing the marginal-operator signature, that are new relative to earlier drafts of this line
 of work and are, in our view, what actually make a claim of this kind checkable.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -137,16 +137,16 @@ H_{\mathrm{FF}} = -t \sum_{i}\left(\sigma_i^x \sigma_{i+1}^x + \sigma_i^y \sigma
 \end{equation}
 an integrable model equivalent, via Jordan-Wigner transformation, to free fermions, and identical
 (up to the overall energy scale $t$) to the XXZ chain at $\Delta=0$. Ground-state entanglement is
-invariant under the overall positive scale $t$ - an overall rescaling of $H$ does not change its
-eigenvectors - so sweeping $t$ is not a genuine physical probe; we use it purely as a built-in
+invariant under the overall positive scale $t$ (an overall rescaling of $H$ does not change its
+eigenvectors), so sweeping $t$ is not a genuine physical probe; we use it purely as a built-in
 consistency check (Sec.~\ref{sec:results}).
 
 \subsection{Ground states, mutual information, and the normalized Laplacian}
 Ground states are obtained via sparse Lanczos diagonalization (matrix-free matrix-vector products),
-which, unlike dense diagonalization, scales to $N=20$--$22$ directly: the sparse XXZ/TFIM
+which, unlike dense diagonalization, scales to $N=20$-$22$ directly: the sparse XXZ/TFIM
 Hamiltonian at $N=20$ has $\sim 2\times10^7$ nonzero entries, and a Lanczos ground state converges
 in seconds. This is a purely practical/computational point, distinct from DMRG, in that it involves
-\emph{no} truncation approximation of any kind - the reported large-$N$ results are numerically
+\emph{no} truncation approximation of any kind: the reported large-$N$ results are numerically
 exact to the solver tolerance ($\sim 10^{-10}$), not bond-dimension-limited. The mutual-information
 matrix is
 \begin{equation}
@@ -213,7 +213,7 @@ TFIM & 12 & $2.4\times10^{-9}$  & $1.1\times10^{-6}$ \\
     XXZ shows a smooth minimum at $\Delta=1$; TFIM shows a sharp drop near $h=1$.
     Spin glass remains fixed at $\lambda_1=1$ (its MI matrix is identically zero, verified to
     machine precision across the full parameter sweep). Free fermions are exactly constant, as
-    required by the overall-scale invariance argument of Sec.~\ref{sec:results} - the maximum
+    required by the overall-scale invariance argument of Sec.~\ref{sec:results}: the maximum
     spread across the sweep is $1.0\times10^{-11}$, consistent with pure floating-point noise.
     }
     \label{fig:lambda1}
@@ -266,7 +266,7 @@ quantum universality classes.
     point.} XXZ and TFIM embeddings are taken at their critical points ($\Delta=1$, $h=1$); free
     fermions and the spin-glass control are shown at representative points on the same sweep.
     The spin-glass embedding is structureless because $L=\mathbb{I}$, whose eigenvectors carry no
-    geometric information - any orthonormal basis of the degenerate eigenspace is equally valid,
+    geometric information: any orthonormal basis of the degenerate eigenspace is equally valid,
     so the plotted points reflect the arbitrary basis returned by the diagonalization routine, not
     physical structure.
     }
@@ -316,17 +316,17 @@ Spin glass & any $J$ & 1.0000 & 1.0000 & 1.0000 & 1.0000 \\
 \label{sec:largen}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-Exact diagonalization via dense solvers limits the accessible system size to $N\lesssim 12$--$14$
+Exact diagonalization via dense solvers limits the accessible system size to $N\lesssim 12$-$14$
 in practice; sparse Lanczos diagonalization removes this limitation for nearest-neighbour chains
 and reaches $N=20$ directly and exactly (Sec.~\ref{sec:dmrg-crosscheck}). We extend both critical
-points - XXZ at $\Delta=1$ and TFIM at $h=1$ - to $N=20$ under both open (OBC) and periodic (PBC)
+points (XXZ at $\Delta=1$ and TFIM at $h=1$) to $N=20$ under both open (OBC) and periodic (PBC)
 boundary conditions, and compare three candidate functional forms for $\lambda_1(N)$: a pure power
 law $\lambda_1 = aN^{-b}$; a logarithmically corrected form $\lambda_1=(a/N)(1+c/\ln N)$, the known
 finite-size signature of a marginally irrelevant operator~\cite{Affleck1989}; and a saturating form
 $\lambda_1=\lambda_\infty + aN^{-b}$ allowing a nonzero $N\to\infty$ asymptote.
 
 \emph{A methodological note on error bars:} $\lambda_1(N)$ is computed exactly (Lanczos to solver
-tolerance $\sim10^{-10}$) - there is no measurement noise in this data, so a classical AIC/BIC
+tolerance $\sim10^{-10}$): there is no measurement noise in this data, so a classical AIC/BIC
 model-selection statistic (which assumes i.i.d.\ Gaussian measurement noise) does not literally
 apply, and we do not report one. Instead we assess whether an extracted parameter is a genuine
 asymptotic property, rather than a small-$N$ artifact of the fit, via a \emph{windowed} refit:
@@ -335,7 +335,7 @@ progressively dropping the smallest system sizes and checking whether the parame
 \subsection{TFIM: a nonzero saturating asymptote, not a vanishing power law}
 
 Fitting the pure two-parameter power law to the TFIM data gives $b=0.44$ (OBC) with the windowed
-exponent \emph{drifting} from $0.44$ to $0.33$ as the smallest sizes are dropped - the signature of
+exponent \emph{drifting} from $0.44$ to $0.33$ as the smallest sizes are dropped, the signature of
 a misspecified asymptote, not a converged critical exponent. Allowing a nonzero asymptote
 ($\lambda_1=\lambda_\infty+aN^{-b}$) improves the fit dramatically, from $R^2=0.985$ to
 $R^2=0.99994$ (OBC), with $\lambda_\infty=0.297\pm0.003$, and the windowed $\lambda_\infty$ converges
@@ -355,7 +355,7 @@ Ising CFT having no marginally irrelevant operator at this point.
 
 Under OBC, the log-corrected form fits the XXZ data far better than the bare power law
 ($R^2=0.9999987$ vs.\ $0.9995$), with a windowed coefficient $c$ that converges smoothly
-($-0.436\to-0.452$ as $N_{\min}$ increases from 6 to 14) rather than drifting - the qualitative
+($-0.436\to-0.452$ as $N_{\min}$ increases from 6 to 14) rather than drifting, the qualitative
 signature of a real effect, not a fitting artifact. The saturating form, allowed a free asymptote,
 returns $\lambda_\infty=-0.023\pm0.003$: small, marginally nonzero, and physically implausible as a
 literal negative asymptote (Laplacian eigenvalues are non-negative by construction), which we read
@@ -373,8 +373,8 @@ The saturating-form asymptote remains small and consistent with zero under PBC a
 ($\lambda_\infty=-0.005\pm0.0001$), so the qualitative conclusion that the XXZ gap vanishes is
 boundary-condition-independent, but the specific claim that its leading finite-size correction is
 the SU(2) marginal-operator logarithm is only cleanly supported under OBC. This is not obviously
-unphysical - boundary conditions are known in the CFT literature to alter the visibility and
-coefficient of marginal-operator corrections - but we have not derived why the effect is weaker
+unphysical (boundary conditions are known in the CFT literature to alter the visibility and
+coefficient of marginal-operator corrections), but we have not derived why the effect is weaker
 under PBC, and we flag this explicitly as an open point rather than paper over it with the cleaner
 OBC number alone.
 
@@ -409,7 +409,7 @@ within the gapless phase ($\Delta<1$), since the operator is known to be margina
 away from the isotropic point~\cite{Affleck1989}. We repeat the OBC fit at $\Delta=0.6,0.7,0.8,0.9,0.95,1.0$, $N=8$ to
 $20$. The log-corrected fit's $R^2$ rises monotonically from $0.996$ at $\Delta=0.6$ to
 $0.9999994$ at $\Delta=1.0$, while the bare power law's $R^2$ stays essentially flat
-($\approx0.9999$ throughout, showing no comparable trend) - see Fig.~\ref{fig:delta_sweep}. This
+($\approx0.9999$ throughout, showing no comparable trend). See Fig.~\ref{fig:delta_sweep}. This
 localization test was not present in earlier drafts of this work and is, in our view, the single
 strongest piece of evidence that the OBC log-correction is specifically an SU(2)-point effect
 rather than a generic feature of the critical XXZ line.
@@ -418,8 +418,8 @@ rather than a generic feature of the critical XXZ line.
     \centering
     \includegraphics[width=\linewidth]{figures/delta_sweep_marginal_operator.png}
     \caption{
-    \textbf{Marginal-operator localization, OBC, $N=8$--$20$.} Left: log-correction coefficient
-    magnitude $|c|$ vs.\ $\Delta$. Right: fit-quality comparison - the log-corrected form's
+    \textbf{Marginal-operator localization, OBC, $N=8$-$20$.} Left: log-correction coefficient
+    magnitude $|c|$ vs.\ $\Delta$. Right: fit-quality comparison: the log-corrected form's
     advantage over the bare power law grows specifically as $\Delta\to1$.
     }
     \label{fig:delta_sweep}
@@ -441,8 +441,8 @@ uses an established literature formula and a different observable (entanglement 
 MI-Laplacian) to check that the simulated ground states are genuinely in the claimed universality
 classes. We recover $c=0.497$ for TFIM (exact: $1/2$) and $c=0.986$ for XXZ (exact: $1$), both with
 $R^2>0.9999$ (Fig.~\ref{fig:central_charge}). We note that the OBC half-chain entropy for XXZ shows a
-pronounced $N\bmod 4$ parity oscillation - a known boundary/Friedel-type effect in finite Heisenberg
-chains - which corrupts a naive OBC fit; this is why the central-charge fit uses PBC data, where the
+pronounced $N\bmod 4$ parity oscillation (a known boundary/Friedel-type effect in finite Heisenberg
+chains), which corrupts a naive OBC fit; this is why the central-charge fit uses PBC data, where the
 oscillation is absent (confirmed directly in our data, not merely asserted).
 
 \begin{figure}[t]
@@ -491,11 +491,11 @@ against independent DMRG, upgrades the earlier qualitative distinction between t
 ("both vanish, with different finite-size forms") to a sharper and, we believe, more defensible one:
 the TFIM spectral gap does not vanish as $N\to\infty$ at all, while the XXZ gap does, with a
 finite-size correction whose functional form (log-corrected vs.\ bare power law) is boundary-condition
-dependent - cleanly log-corrected under OBC, less clearly so under PBC. The dedicated $\Delta$-sweep
+dependent: cleanly log-corrected under OBC, less clearly so under PBC. The dedicated $\Delta$-sweep
 localizing the OBC log-correction specifically at $\Delta=1$ is, to our knowledge, the first
 demonstration that an MI-Laplacian spectral observable tracks the localization of a marginally
 irrelevant operator, and it substantially strengthens the claim that the two universality classes
-are quantitatively - not just qualitatively - distinguishable. We are explicit that we have not
+are quantitatively (not just qualitatively) distinguishable. We are explicit that we have not
 derived, from the operator content of either CFT, \emph{why} $\lambda_1$ should be sensitive to a
 marginal operator in the first place, nor why the PBC signature is weaker; both are reported as
 empirical findings and left as open questions.
@@ -524,14 +524,14 @@ reproducibly, not as evidence for emergent geometry, holographic or otherwise, i
 Mutual-information Laplacians distinguish quantum phase structure across the models studied here,
 with a classical spin-glass control confirming that this structure is not manufactured by the
 pipeline itself. Finite-size scaling confirms the robustness of these signatures across
-$N=6,8,10,12$. Extending both critical points to $N=20$ via exact sparse diagonalization - reaching
+$N=6,8,10,12$. Extending both critical points to $N=20$ via exact sparse diagonalization (reaching
 this size without any bond-dimension truncation, and cross-validated against independent DMRG to
-$\sim10^{-6}$ - reveals a genuine, boundary-condition-tested distinction between the two
+$\sim10^{-6}$) reveals a genuine, boundary-condition-tested distinction between the two
 universality classes: a saturating, nonzero spectral-gap asymptote for TFIM versus a vanishing,
 log-corrected gap for XXZ whose correction is most cleanly resolved under open boundaries. A
 dedicated $\Delta$-sweep confirms the log-correction is specifically localized at the SU(2) point,
-and two checks independent of the MI-Laplacian diagnostic itself - a Calabrese-Cardy central-charge
-fit and a textbook Ising energy-gap scaling collapse - confirm the underlying ground states and
+and two checks independent of the MI-Laplacian diagnostic itself (a Calabrese-Cardy central-charge
+fit and a textbook Ising energy-gap scaling collapse) confirm the underlying ground states and
 solver are correct. We regard the TFIM saturation result and the PBC/OBC sensitivity of the XXZ
 log-correction as the most important outcomes of this extended analysis: both are genuine surprises
 relative to earlier, less rigorously tested drafts of this work, and both are reported as found
@@ -550,7 +550,7 @@ orthonormality), Lanczos residual convergence, exact recovery of known fitting f
 data, and DMRG/exact-ED agreement. A second file, \texttt{code/tests/test\_paper\_numbers.py} (18
 tests), checks every quantitative claim made in the text and tables above directly against the
 corresponding data file, so that a future change to the pipeline that silently altered a reported
-number - or a transcription slip in the manuscript itself - would fail CI rather than pass
+number (or a transcription slip in the manuscript itself) would fail CI rather than pass
 unnoticed; one such slip (a transposed digit in the PBC XXZ power-law $R^2$, Sec.~\ref{sec:largen})
 was caught and corrected this way during preparation of this revision.
 
